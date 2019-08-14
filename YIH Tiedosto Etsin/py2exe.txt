@@ -1,1 +1,1 @@
-pyinstaller --onefile --windowed --icon="C:\Users\YIH Teol.Acer\Documents\YIH Tiedosto etsin\YIH Tiedosto Etsin\YIH Tiedosto Etsin\yih.ico" "YIH Tiedosto Etsin.pyw"
+pyinstaller --onefile --windowed --icon="C:\Users\YIH Teol.Acer\Documents\YIH Tiedosto etsin\YIH Tiedosto Etsin\YIH Tiedosto Etsin\yih.ico" "YIH Tiedosto Etsin.py"

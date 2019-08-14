@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['YIH Tiedosto Etsin.pyw'],
+a = Analysis(['YIH Tiedosto Etsin.py'],
              pathex=['C:\\Users\\YIH Teol.Acer\\Documents\\YIH Tiedosto etsin\\YIH Tiedosto Etsin\\YIH Tiedosto Etsin'],
              binaries=[],
              datas=[],
