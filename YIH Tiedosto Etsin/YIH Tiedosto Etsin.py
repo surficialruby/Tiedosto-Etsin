@@ -1,6 +1,6 @@
 __author__ = "Atte Kangasvieri"
 
-import configparser, os, fnmatch, multiprocessing, subprocess 
+import configparser, os, fnmatch, multiprocessing, subprocess, time
 import tkinter as tk   
 from tkinter import *
 from tkinter import font  as tkfont
@@ -88,7 +88,7 @@ class StartPage(tk.Frame):
         e1 = Entry(f_top)
         self.entry1 = e1
         button1 = tk.Button(f_top, text="Hae",
-                           command=lambda: self.search())                 
+                           command=lambda: self.search())
         lb = Listbox(f_mid)        
         self.lb1 = lb
         sb = Scrollbar(lb, orient="vertical")
@@ -113,7 +113,7 @@ class StartPage(tk.Frame):
         f_bot.pack()
         # f_top childs
         e1.grid(row=2, column=1)
-        button1.grid(row=3, column=1,pady=10) 
+        button1.grid(row=3, column=1,pady=10)
         # f_mid childs
         lb.pack(side="top",fill='both',expand=True)
         l_loading.pack(pady=10)
@@ -126,15 +126,15 @@ class StartPage(tk.Frame):
         self.update()
 
     def update(self):
-        # if queue not empty update listbox and empty queue
+        # If queue not empty update lb1 listbox and empty queue
         if not queue_lb.empty():            
             self.lb1.insert('end',queue_lb.get())
             queue_lb.empty()
-        # if queue not empty update result array and empty queue
+        # If queue not empty update result array and empty queue
         if not queue_result.empty():
             result.append(queue_result.get())
             queue_result.empty()
-        # if queue not empty update label with 'Ladataa...' else set label empty
+        # If queue not empty update label with 'Ladataa...' else set label empty
         if not queue_loading.empty():  
             self.label_loading['text'] = 'Ladataan...'
         else:
@@ -155,15 +155,10 @@ class StartPage(tk.Frame):
         self.lb1.delete(0,'end')
         # Empty rersult array
         del result[:]
-        try:
-            queue_lb.empty()
-            queue_result.empty()
-            p_search.close()
-        except:
-            pass
+        queue_lb.empty()
+        queue_result.empty()
         # Create new process for searching files in background
         p2 = multiprocessing.Process(target=Search, args=(str(getin(self.entry1)),queue_lb,queue_result,queue_loading))
-        p_search = p2
         p2.daemon = True
         p2.start()
 
@@ -197,8 +192,7 @@ class Search():
     def __init__(self, input, qlb, qresult,ql, *args, **kwargs):
         self.search_func(input, qlb, qresult, ql)
 
-    def search_func(self, pattern = '', qlb = '', qresult = '', ql = ''):
-        print(os.getpid())
+    def search_func(self, pattern = '', qlb = None, qresult = None, ql = None):
         pattern = '*'+pattern+'*.*'
         # Read path from settings.ini file
         config = configparser.ConfigParser()
@@ -212,7 +206,7 @@ class Search():
                     # Add pattern matching results to queue_lb and queue_result
                     qlb.put((os.path.basename(os.path.join(root,name))))
                     qresult.put((os.path.join(root, name)))
-        # Empty loading queue
+        # Empty loading queue and cancel
         ql.empty()
         # Currently used to get update to queue so 'Ladataan...' text can be removed
         print(ql.get())
@@ -227,10 +221,8 @@ if __name__ == "__main__":
     # using the manager, create shared data structures
     queue_lb = manager.Queue()
     queue_result = manager.Queue()
-    queue_gresult = manager.Queue()
     queue_lb1 = manager.Queue()
     queue_loading = manager.Queue()
-    queue_procId = manager.Queue()
 
     # Main app
     app = MainApp()
